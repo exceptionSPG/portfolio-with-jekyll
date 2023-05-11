@@ -20,8 +20,10 @@ resume: true
 resume-external: false
 resume-url: assets/images/resume.pdf
 
-url: #https://shivagyawali.com.np
+url: https://shivagyawali.com.np
 # your url: https://USERNAME.github.io
+
+repository: exceptionSPG/portfolio-with-jekyll
 
 permalink: /:title/
 
