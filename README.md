@@ -1,8 +1,8 @@
 <p align="center">
-    <h2 align="center">Indigo Minimalist Jekyll Template - <a href="https://sergiokopplin.github.io/indigo/">Demo</a></h2>
+    <h2 align="center">Portfolio made with Indigo jekyll theme - <a href="https://sergiokopplin.github.io/indigo/">Theme Demo here</a></h2>
 </p>
 
-<p align="center">This is a simple and minimalist template for Jekyll for those who likes to eat noodles.</p>
+<p align="center"></p>
 
 ***
 
@@ -20,9 +20,9 @@
     Light and Dark themes.
 </p>
 
-<p align="center">
+<!-- <p align="center">
     <img src="https://raw.githubusercontent.com/sergiokopplin/indigo/gh-pages/assets/screen-shot.png" />
-</p>
+</p> -->
 
 ## What has inside
 
