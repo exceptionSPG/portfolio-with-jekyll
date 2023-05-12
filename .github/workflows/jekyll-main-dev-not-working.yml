@@ -70,7 +70,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: dev
+          name: github-pages
           path: _site
 
   # Deployment job for main branch
@@ -100,12 +100,24 @@ jobs:
   # Deployment job for dev branch
   deploy-dev:
     if: github.ref == 'refs/heads/dev'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build-dev
+    needs: build-main
     steps:
-      - name: Deploy to dev domain
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          publish_dir: ./_site
-          cname: dev.shivagyawali.com.np
-          commit_message: "Deploy dev branch to dev.shivagyawali.com.np"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+
+
+    # if: github.ref == 'refs/heads/dev'
+    # runs-on: ubuntu-latest
+    # needs: build-dev
+    # steps:
+    #   - name: Deploy to dev domain
+    #     uses: peaceiris/actions-gh-pages@v3
+    #     with:
+    #       publish_dir: ./_site
+    #       cname: dev.shivagyawali.com.np
+    #       commit_message: "Deploy dev branch to dev.shivagyawali.com.np"
