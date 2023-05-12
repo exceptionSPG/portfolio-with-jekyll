@@ -24,8 +24,8 @@ baseurl: ""
 url: "https://shivagyawali.com.np"
 
 # Subdomain branch configuration
-baseurl: "/dev"
-url: "https://dev.shivagyawali.com.np"
+# baseurl: "/dev"
+# url: "https://dev.shivagyawali.com.np"
 #url: https://shivagyawali.com.np
 # your url: https://USERNAME.github.io
 
