@@ -7,9 +7,9 @@
 name: Deploy Jekyll site to Pages
 
 on:
-  # Runs on pushes targeting the main and dev branch
+  # Runs on pushes targeting the default branch
   push:
-    branches: ["main", "dev"]
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -27,85 +27,38 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Build job for main branch
-  build-main:
-    if: github.ref == 'refs/heads/main'
+  # Build job
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.92.0
+        uses: ruby/setup-ruby@55283cc23133118229fd3f97f9336ee23a179fcf # v1.146.0
         with:
-          ruby-version: '3.0'
-          bundler-cache: true
-          cache-version: 1
+          ruby-version: '3.1' # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          cache-version: 0 # Increment this number if you need to re-download cached gems
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v3
       - name: Build with Jekyll
-        run: bundle exec jekyll build
+        # Outputs to the './_site' directory by default
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
       - name: Upload artifact
+        # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v1
-        with:
-          name: main
-          path: _site
 
-  # Build job for dev branch
-  build-dev:
-    if: github.ref == 'refs/heads/dev'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.92.0
-        with:
-          ruby-version: '3.0'
-          bundler-cache: true
-          cache-version: 1
-      - name: Build with Jekyll
-        run: bundle exec jekyll build
-        env:
-          JEKYLL_ENV: production
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: dev
-          path: _site
-
-  # Deployment job for main branch
-  deploy-main:
-    if: github.ref == 'refs/heads/main'
+  # Deployment job
+  deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build-main
+    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-
-
-    # runs-on: ubuntu-latest
-    # needs: build-main
-    # steps:
-    #   - name: Deploy to main domain
-    #     uses: peaceiris/actions-gh-pages@v3
-    #     with:
-    #       publish_dir: ./_site
-    #       cname: shivagyawali.com.np
-    #       commit_message: "Deploy main branch to shivagyawali.com.np"
-
-  # Deployment job for dev branch
-  deploy-dev:
-    if: github.ref == 'refs/heads/dev'
-    runs-on: ubuntu-latest
-    needs: build-dev
-    steps:
-      - name: Deploy to dev domain
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          publish_dir: ./_site
-          cname: dev.shivagyawali.com.np
-          commit_message: "Deploy dev branch to dev.shivagyawali.com.np"
