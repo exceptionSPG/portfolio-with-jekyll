@@ -9,6 +9,7 @@ tag:
 - laravel
 - markdown
 category: blog
+star: true
 author: shivagyawali
 description: Dockerizing Laravel Application
 ---
