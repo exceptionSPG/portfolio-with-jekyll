@@ -1,0 +1,85 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+      - main
+      - dev
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  rubyVersion: '3.0'
+
+stages:
+# ============================================================
+# BUILD
+# ============================================================
+- stage: Build
+  displayName: Build Jekyll
+  jobs:
+    - job: build
+      displayName: Build Jekyll Site
+      steps:
+        - checkout: self
+
+        - task: UseRubyVersion@0
+          inputs:
+            versionSpec: $(rubyVersion)
+
+        - script: |
+            gem install bundler
+            bundle install --path vendor/bundle
+          displayName: Install Ruby Dependencies
+
+        - script: |
+            export JEKYLL_ENV=production
+            bundle exec jekyll build
+          displayName: Build Jekyll
+
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: '_site'
+            ArtifactName: 'site'
+            publishLocation: 'Container'
+
+# ============================================================
+# DEPLOY TO GITHUB PAGES (gh-pages branch)
+# ============================================================
+- stage: Deploy
+  displayName: Deploy to GitHub Pages
+  dependsOn: Build
+  jobs:
+    - job: deploy
+      displayName: Push gh-pages Branch
+      steps:
+        - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'current'
+            artifactName: 'site'
+            downloadPath: '$(System.DefaultWorkingDirectory)'
+
+        - script: |
+            cd $(System.DefaultWorkingDirectory)
+            rm -rf push
+            mkdir push
+            cp -r site/* push/
+
+            cd push
+            git init
+            git config user.name "azure-devops"
+            git config user.email "azure@devops"
+
+            git add .
+            git commit -m "Deploy"
+            git branch -M gh-pages
+
+            git remote add origin https://$(GITHUB_PAT)@github.com/ORG/REPO.git
+            git push -f origin gh-pages
+          displayName: Force Push to gh-pages
+          env:
+            GITHUB_PAT: $(GITHUB_PAT)
