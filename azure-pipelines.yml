@@ -10,7 +10,7 @@ trigger:
       - dev
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: Ubuntu-server
 
 variables:
   rubyVersion: '3.0'
