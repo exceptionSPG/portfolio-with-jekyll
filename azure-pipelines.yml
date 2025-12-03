@@ -9,8 +9,7 @@ trigger:
       - main
       - dev
 
-pool:
-  vmImage: Ubuntu-server
+pool: My Mac Agent
 
 variables:
   rubyVersion: '3.0'
